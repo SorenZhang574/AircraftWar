@@ -1,0 +1,96 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+title 敌机与道具的工厂模式 UML 类图
+
+class EnemyAircraft {
+    + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward():void
+    + shoot():List<BaseBullet>
+}
+
+class EliteEnemy {
+    - shootNum:int
+    - power:int
+    - direction:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+}
+
+class MobEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+}
+
+abstract class AbstractProp {
+    + AbstractProp(int locationX, int locationY, int speedX, int speedY)
+    + forward():void
+    + {abstract} activate(HeroAircraft hero)
+}
+
+class HpSupply {
+    - hpIncrease:int = 30
+    + HpSupply(int x, int y, int speedY)
+    + activate(HeroAircraft hero):void
+}
+
+class BombSupply {
+    + BombSupply(int x, int y, int speedY)
+    + activate(HeroAircraft hero):void
+}
+
+class FireSupply {
+    + FireSupply(int x, int y, int speedY)
+    + activate(HeroAircraft hero):void
+}
+
+interface EnemyFactory {
+    + {abstract} createEnemy(): EnemyAircraft
+}
+
+interface PropFactory {
+    + {abstract} createProp(int locationX, int locationY): AbstractProp
+}
+
+class MobEnemyFactory {
+    + createEnemy(): EnemyAircraft
+}
+
+class EliteEnemyFactory {
+    + createEnemy(): EnemyAircraft
+}
+
+class HpSupplyFactory {
+    + speedY
+    + createProp(int locationX, int locationY): AbstractProp
+}
+class BombSupplyFactory {
+    + speedY
+    + createProp(int locationX, int locationY): AbstractProp
+}
+class FireSupplyFactory {
+    + speedY
+    + createProp(int locationX, int locationY): AbstractProp
+}
+
+EnemyAircraft <|-- MobEnemy
+EnemyAircraft <|-- EliteEnemy
+AbstractProp <|-- HpSupply
+AbstractProp <|-- BombSupply
+AbstractProp <|-- FireSupply
+
+EnemyFactory <|.. MobEnemyFactory
+EnemyFactory <|.. EliteEnemyFactory
+PropFactory <|.. HpSupplyFactory
+PropFactory <|.. BombSupplyFactory
+PropFactory <|.. FireSupplyFactory
+
+EnemyFactory ..> EnemyAircraft
+PropFactory ..> AbstractProp
+
+MobEnemyFactory ..> MobEnemy
+EliteEnemyFactory ..> EliteEnemy
+HpSupplyFactory ..> HpSupply
+BombSupplyFactory ..> BombSupply
+FireSupplyFactory ..> FireSupply
+
+@enduml

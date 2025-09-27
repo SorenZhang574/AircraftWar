@@ -1,0 +1,56 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+title 英雄机单例模式 UML 类图
+
+abstract class AbstractFlyingObject
+{
+    # locationX:int
+    # locationY:int
+    # speedX:int
+    # speedY:int
+    # image:BufferedImage
+    # width:int
+    # height:int
+    # isValid:boolean
+
+    + AbstractFlyingObject(int locationX, int locationY, int speedX, int speedY)
+    + forward():void
+    + crash(AbstractFlyingObject flyingObject):boolean
+    + setLocation(double locationX, double locationY):void
+    + getLocationX():int
+    + getLocationY():int
+    + getSpeedY():int
+    + getImage():BufferedImage
+    + getWidth():int
+    + getHeight():int
+    + notValid():boolean
+    + vanish():void
+}
+
+abstract class AbstractAircraft
+{
+	# maxHp:int
+    # hp:int
+    + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + decreaseHp(int decrease):void
+    + getHp():int
+    + {abstract} shoot():List<BaseBullet>
+}
+
+class HeroAircraft {
+    - shootNum:int
+    - power:int
+    - direction:int
+    + {static} instance: HeroAircraft
+    - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + {static} getInstance(int locationX, int locationY, int speedX, int speedY, int hp):HeroAircraft
+    + forward():void
+    + shoot():List<BaseBullet>
+    + increaseHp(int increase):void
+}
+
+AbstractFlyingObject <|-- AbstractAircraft
+AbstractAircraft <|-- HeroAircraft
+
+@enduml
