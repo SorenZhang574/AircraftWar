@@ -40,13 +40,6 @@ public class Game extends JPanel {
     private final List<AbstractProp> props;
 
     private EnemyFactory enemyFactory;
-    private EliteEnemyFactory eliteEnemyFactory = new EliteEnemyFactory();
-    private MobEnemyFactory mobEnemyFactory = new MobEnemyFactory();
-
-    private PropFactory propFactory;
-    private HpSupplyFactory hpSupplyFactory = new HpSupplyFactory();
-    private BombSupplyFactory bombSupplyFactory = new BombSupplyFactory();
-    private FireSupplyFactory fireSupplyFactory = new FireSupplyFactory();
 
     /**
      * 屏幕中出现的敌机最大数量
@@ -75,11 +68,7 @@ public class Game extends JPanel {
     private boolean gameOverFlag = false;
 
     public Game() {
-        heroAircraft = HeroAircraft.getInstance(
-                Main.WINDOW_WIDTH / 2,
-                Main.WINDOW_HEIGHT - ImageManager.HERO_IMAGE.getHeight(),
-                0, 0, 100);
-
+        heroAircraft = HeroAircraft.getInstance();
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
         enemyBullets = new LinkedList<>();
@@ -117,10 +106,11 @@ public class Game extends JPanel {
                 if (enemyAircrafts.size() < enemyMaxNumber) {
                     EnemyAircraft newEnemy;
                     if (prob < 0.2) {
-                        newEnemy = eliteEnemyFactory.createEnemy();
+                        enemyFactory = new EliteEnemyFactory();
                     } else {
-                        newEnemy = mobEnemyFactory.createEnemy();
+                        enemyFactory = new MobEnemyFactory();
                     }
+                    newEnemy = enemyFactory.createEnemy();
                     enemyAircrafts.add(newEnemy);
                 }
                 // 飞机射出子弹
@@ -236,25 +226,8 @@ public class Game extends JPanel {
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
                         // TODO 获得分数，产生道具补给
-                        score += 10;
-                        if (enemyAircraft instanceof EliteEnemy) {
-                            double dropChance = 0.75;
-                            if (Math.random() < dropChance) {
-                                double prob = Math.random();
-                                int px = enemyAircraft.getLocationX();
-                                int py = enemyAircraft.getLocationY();
-                                AbstractProp prop;
-
-                                if (prob < 0.33) {
-                                    prop = hpSupplyFactory.createProp(px, py);
-                                } else if (prob < 0.66) {
-                                    prop = fireSupplyFactory.createProp(px, py);
-                                } else {
-                                    prop = bombSupplyFactory.createProp(px, py);
-                                }
-                                props.add(prop);
-                            }
-                        }
+                        score += enemyAircraft.getScore();
+                        props.addAll(enemyAircraft.getProps());
                     }
                 }
                 // 英雄机 与 敌机 相撞，均损毁
@@ -274,10 +247,7 @@ public class Game extends JPanel {
                 pit.remove();
                 continue;
             }
-            // 道具下落
             prop.forward();
-
-            // 英雄拾取检测
             if (prop.crash(heroAircraft)) {
                 prop.activate(heroAircraft);
             }

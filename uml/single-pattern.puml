@@ -42,9 +42,9 @@ class HeroAircraft {
     - shootNum:int
     - power:int
     - direction:int
-    + {static} instance: HeroAircraft
+    - {static} instance: HeroAircraft
     - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
-    + {static} getInstance(int locationX, int locationY, int speedX, int speedY, int hp):HeroAircraft
+    + {static} getInstance():HeroAircraft
     + forward():void
     + shoot():List<BaseBullet>
     + increaseHp(int increase):void

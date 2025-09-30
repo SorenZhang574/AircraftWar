@@ -1,8 +1,12 @@
 package edu.hitsz.aircraft;
 
-import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
+import edu.hitsz.factory.BombSupplyFactory;
+import edu.hitsz.factory.FireSupplyFactory;
+import edu.hitsz.factory.HpSupplyFactory;
+import edu.hitsz.factory.PropFactory;
+import edu.hitsz.prop.AbstractProp;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +30,12 @@ public class EliteEnemy extends EnemyAircraft {
      */
     private int direction = 1;
 
+    /**
+     * 被消灭时获得分数
+     */
+    private final int score = 20;
+
+
     public EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp);
     }
@@ -45,5 +55,33 @@ public class EliteEnemy extends EnemyAircraft {
             res.add(bullet);
         }
         return res;
+    }
+
+    @Override
+    public int getScore() {
+        return score;
+    }
+
+    @Override
+    public List<AbstractProp> getProps() {
+        PropFactory propFactory;
+        List<AbstractProp> props = new LinkedList<>();
+        double dropChance = 0.75;
+        if (Math.random() < dropChance) {
+            double prob = Math.random();
+            int px = this.getLocationX();
+            int py = this.getLocationY();
+            AbstractProp prop;
+            if (prob < 0.33) {
+                propFactory = new HpSupplyFactory();
+            } else if (prob < 0.66) {
+                propFactory = new FireSupplyFactory();
+            } else {
+                propFactory = new BombSupplyFactory();
+            }
+            prop = propFactory.createProp(px, py);
+            props.add(prop);
+        }
+        return props;
     }
 }

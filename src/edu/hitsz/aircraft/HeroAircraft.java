@@ -1,5 +1,7 @@
 package edu.hitsz.aircraft;
 
+import edu.hitsz.application.ImageManager;
+import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.HeroBullet;
 
@@ -40,16 +42,19 @@ public class HeroAircraft extends AbstractAircraft {
     /**
      * 懒汉式实现英雄机创建
      */
-
     private static HeroAircraft instance;
 
     private HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp);
     }
 
-    public static synchronized HeroAircraft getInstance(int locationX, int locationY, int speedX, int speedY, int hp) {
+    public static synchronized HeroAircraft getInstance() {
         if (instance == null) {
-            instance = new HeroAircraft(locationX, locationY, speedX, speedY, hp);
+            instance = new HeroAircraft(
+                    Main.WINDOW_WIDTH / 2,
+                    Main.WINDOW_HEIGHT - ImageManager.HERO_IMAGE.getHeight(),
+                    0, 0, 100
+            );
         }
         return instance;
     }

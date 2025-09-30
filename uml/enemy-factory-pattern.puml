@@ -1,0 +1,69 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+title 敌机的工厂模式 UML 类图
+
+abstract class AbstractProp {
+    + AbstractProp(int locationX, int locationY, int speedX, int speedY)
+    + forward():void
+    + {abstract} activate(HeroAircraft hero)
+}
+
+interface PropFactory {
+    + {abstract} createProp(int locationX, int locationY): AbstractProp
+}
+
+abstract class EnemyAircraft {
+    + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + forward():void
+    + shoot():List<BaseBullet>
+    + {abstract} getScore:int
+    + {abstract} getProps:List<AbstractProp>
+}
+
+class EliteEnemy {
+    - shootNum:int
+    - power:int
+    - direction:int
+    - score:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore:int
+    + getProps:List<AbstractProp>
+}
+
+class MobEnemy {
+    - score:int
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + getScore:int
+    + getProps:List<AbstractProp>
+}
+
+interface EnemyFactory {
+    + {abstract} createEnemy(): EnemyAircraft
+}
+
+class MobEnemyFactory {
+    + createEnemy(): EnemyAircraft
+}
+
+class EliteEnemyFactory {
+    + createEnemy(): EnemyAircraft
+}
+
+EnemyAircraft <|-- MobEnemy
+EnemyAircraft <|-- EliteEnemy
+EnemyAircraft ..> AbstractProp
+MobEnemy ..> AbstractProp
+EliteEnemy ..> AbstractProp
+
+EnemyFactory <|.. MobEnemyFactory
+EnemyFactory <|.. EliteEnemyFactory
+EliteEnemy ..> PropFactory
+
+EnemyFactory ..> EnemyAircraft
+
+MobEnemyFactory ..> MobEnemy
+EliteEnemyFactory ..> EliteEnemy
+
+@enduml

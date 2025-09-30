@@ -1,24 +1,32 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-title 敌机与道具的工厂模式 UML 类图
+title 道具的工厂模式 UML 类图
 
-class EnemyAircraft {
+abstract class EnemyAircraft {
     + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
     + forward():void
     + shoot():List<BaseBullet>
+    + {abstract} getScore:int
+    + {abstract} getProps:List<AbstractProp>
 }
 
 class EliteEnemy {
     - shootNum:int
     - power:int
     - direction:int
+    - score:int
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
     + shoot():List<BaseBullet>
+    + getScore:int
+    + getProps:List<AbstractProp>
 }
 
 class MobEnemy {
+    - score:int
     + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + getScore:int
+    + getProps:List<AbstractProp>
 }
 
 abstract class AbstractProp {
@@ -43,20 +51,8 @@ class FireSupply {
     + activate(HeroAircraft hero):void
 }
 
-interface EnemyFactory {
-    + {abstract} createEnemy(): EnemyAircraft
-}
-
 interface PropFactory {
     + {abstract} createProp(int locationX, int locationY): AbstractProp
-}
-
-class MobEnemyFactory {
-    + createEnemy(): EnemyAircraft
-}
-
-class EliteEnemyFactory {
-    + createEnemy(): EnemyAircraft
 }
 
 class HpSupplyFactory {
@@ -72,25 +68,23 @@ class FireSupplyFactory {
     + createProp(int locationX, int locationY): AbstractProp
 }
 
-EnemyAircraft <|-- MobEnemy
-EnemyAircraft <|-- EliteEnemy
 AbstractProp <|-- HpSupply
 AbstractProp <|-- BombSupply
 AbstractProp <|-- FireSupply
 
-EnemyFactory <|.. MobEnemyFactory
-EnemyFactory <|.. EliteEnemyFactory
 PropFactory <|.. HpSupplyFactory
 PropFactory <|.. BombSupplyFactory
 PropFactory <|.. FireSupplyFactory
 
-EnemyFactory ..> EnemyAircraft
 PropFactory ..> AbstractProp
 
-MobEnemyFactory ..> MobEnemy
-EliteEnemyFactory ..> EliteEnemy
 HpSupplyFactory ..> HpSupply
 BombSupplyFactory ..> BombSupply
 FireSupplyFactory ..> FireSupply
+
+EnemyAircraft ..> AbstractProp
+MobEnemy ..> AbstractProp
+EliteEnemy ..> AbstractProp
+EliteEnemy ..> PropFactory
 
 @enduml
