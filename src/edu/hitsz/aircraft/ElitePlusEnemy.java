@@ -1,5 +1,6 @@
 package edu.hitsz.aircraft;
 
+import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.factory.BombSupplyFactory;
@@ -11,19 +12,18 @@ import edu.hitsz.prop.AbstractProp;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EliteEnemy extends EnemyAircraft {
-
+public class ElitePlusEnemy extends EnemyAircraft{
     /**攻击方式 */
 
     /**
      * 子弹一次发射数量
      */
-    private int shootNum = 1;
+    private int shootNum = 3;
 
     /**
      * 子弹伤害
      */
-    private int power = 10;
+    private int power = 20;
 
     /**
      * 子弹射击方向 (向上发射：-1，向下发射：1)
@@ -33,11 +33,10 @@ public class EliteEnemy extends EnemyAircraft {
     /**
      * 被消灭时获得分数
      */
-    private final int score = 20;
+    private final int score = 50;
 
-    public EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
+    public ElitePlusEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp);
-        this.speedX = 0;
     }
 
     @Override
@@ -45,11 +44,12 @@ public class EliteEnemy extends EnemyAircraft {
         List<BaseBullet> res = new LinkedList<>();
         int x = this.getLocationX();
         int y = this.getLocationY() + direction*2;
-        int speedX = 0;
+        int speedX = 5;
         int speedY = this.getSpeedY() + direction*2;
         BaseBullet bullet;
         for(int i=0; i<shootNum; i++){
-            bullet = new EnemyBullet(x + (i*2 - shootNum + 1)*10, y, speedX, speedY, power);
+            // 散射弹道
+            bullet = new EnemyBullet(x, y, (i-1)*speedX, speedY, power);
             res.add(bullet);
         }
         return res;
@@ -64,7 +64,7 @@ public class EliteEnemy extends EnemyAircraft {
     public List<AbstractProp> getProps() {
         PropFactory propFactory;
         List<AbstractProp> props = new LinkedList<>();
-        double dropChance = 0.75;
+        double dropChance = 0.9;
         if (Math.random() < dropChance) {
             double prob = Math.random();
             int px = this.getLocationX();

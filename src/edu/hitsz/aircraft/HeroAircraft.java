@@ -77,8 +77,6 @@ public class HeroAircraft extends AbstractAircraft {
         int speedY = this.getSpeedY() + direction*5;
         BaseBullet bullet;
         for(int i=0; i<shootNum; i++){
-            // 子弹发射位置相对飞机位置向前偏移
-            // 多个子弹横向分散
             bullet = new HeroBullet(x + (i*2 - shootNum + 1)*10, y, speedX, speedY, power);
             res.add(bullet);
         }

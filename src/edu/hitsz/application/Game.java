@@ -57,10 +57,24 @@ public class Game extends JPanel {
 
     /**
      * 周期（ms)
-     * 指示子弹的发射、敌机的产生频率
+     * 指示敌机的产生频率、英雄机子弹的发射频率
      */
     private int cycleDuration = 600;
     private int cycleTime = 0;
+
+    /**
+     * 周期（ms)
+     * 指示子弹的发射频率
+     */
+
+    private int cycleDurationEnemy = 1000;
+    private int cycleTimeEnemy = 0;
+
+    /**
+     * Boss 机出现分数阈值
+     */
+    private int scoreThreshold = 500;
+    private int bossCount = 0;
 
     /**
      * 游戏结束标志
@@ -105,16 +119,27 @@ public class Game extends JPanel {
                 double prob = Math.random();
                 if (enemyAircrafts.size() < enemyMaxNumber) {
                     EnemyAircraft newEnemy;
-                    if (prob < 0.2) {
+                    if ((score % scoreThreshold == 0) && (score != 0) && (bossCount == 0)) {
+                        enemyFactory = new BossEnemyFactory();
+                        bossCount++;
+                    } else if (prob < 0.05) {
+                        enemyFactory = new ElitePlusEnemyFactory();
+                    } else if (prob < 0.20) {
                         enemyFactory = new EliteEnemyFactory();
                     } else {
                         enemyFactory = new MobEnemyFactory();
                     }
                     newEnemy = enemyFactory.createEnemy();
-                    enemyAircrafts.add(newEnemy);
+                    if (newEnemy != null) {
+                        enemyAircrafts.add(newEnemy);
+                    }
                 }
+                shootActionHero();
+            }
+
+            if (timeCountAndNewCycleJudgeEnemy()) {
                 // 飞机射出子弹
-                shootAction();
+                shootActionEnemy();
             }
 
             // 子弹移动
@@ -165,11 +190,25 @@ public class Game extends JPanel {
         }
     }
 
-    private void shootAction() {
+    private boolean timeCountAndNewCycleJudgeEnemy() {
+        cycleTimeEnemy += timeInterval;
+        if (cycleTimeEnemy >= cycleDurationEnemy) {
+            // 跨越到新的周期
+            cycleTimeEnemy %= cycleDurationEnemy;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void shootActionEnemy() {
         // TODO 敌机射击
         for (EnemyAircraft enemy : enemyAircrafts) {
             enemyBullets.addAll(enemy.shoot());
         }
+    }
+
+    private void shootActionHero() {
         // 英雄射击
         heroBullets.addAll(heroAircraft.shoot());
     }
@@ -214,6 +253,10 @@ public class Game extends JPanel {
                 continue;
             }
             for (EnemyAircraft enemyAircraft : enemyAircrafts) {
+                if ((enemyAircraft instanceof BossEnemy) && enemyAircraft.notValid()) {
+                    bossCount = 0;
+                    continue;
+                }
                 if (enemyAircraft.notValid()) {
                     // 已被其他子弹击毁的敌机，不再检测
                     // 避免多个子弹重复击毁同一敌机的判定
@@ -325,7 +368,7 @@ public class Game extends JPanel {
     private void paintScoreAndLife(Graphics g) {
         int x = 10;
         int y = 25;
-        g.setColor(new Color(16711680));
+        g.setColor(new Color(0x1E1F22));
         g.setFont(new Font("SansSerif", Font.BOLD, 22));
         g.drawString("SCORE:" + this.score, x, y);
         y = y + 20;
