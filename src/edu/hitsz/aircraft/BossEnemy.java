@@ -2,33 +2,15 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
-import edu.hitsz.factory.BombSupplyFactory;
-import edu.hitsz.factory.FireSupplyFactory;
-import edu.hitsz.factory.HpSupplyFactory;
-import edu.hitsz.factory.PropFactory;
+import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
 import edu.hitsz.application.ImageManager;
+import edu.hitsz.strategy.RingShootStrategy;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class BossEnemy extends EnemyAircraft {
-    /**攻击方式 */
-
-    /**
-     * 子弹一次发射数量
-     */
-    private int shootNum = 20;
-
-    /**
-     * 子弹伤害
-     */
-    private int power = 20;
-
-    /**
-     * 子弹射击方向 (向上发射：-1，向下发射：1)
-     */
-    private int direction = 1;
 
     /**
      * 被消灭时获得分数
@@ -36,24 +18,10 @@ public class BossEnemy extends EnemyAircraft {
     private final int score = 100;
 
     public BossEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
-        super(locationX, locationY, speedX, speedY, hp);
-    }
-
-    @Override
-    public List<BaseBullet> shoot() {
-        List<BaseBullet> res = new LinkedList<>();
-        int x = this.getLocationX();
-        int y = this.getLocationY();
-        double angleStep = 2 * Math.PI / shootNum;
-        int bulletSpeed = 8;
-        for (int i = 0; i < shootNum; i++) {
-            double currentAngle = i * angleStep;
-            double speedX = bulletSpeed * Math.cos(currentAngle);
-            double speedY = bulletSpeed * Math.sin(currentAngle);
-            BaseBullet bullet = new EnemyBullet(x, y, (int) speedX, (int) speedY, power);
-            res.add(bullet);
-        }
-        return res;
+        super(locationX, locationY, speedX, speedY, hp, new RingShootStrategy());
+        this.power = 20;
+        this.direction = 1;
+        this.shootNum = 20;
     }
 
     @Override
@@ -89,12 +57,14 @@ public class BossEnemy extends EnemyAircraft {
         for (int i = 0; i < propCount; i++) {
             PropFactory propFactory;
             double prob = Math.random();
-            if (prob < 0.33) {
+            if (prob < 0.25) {
                 propFactory = new HpSupplyFactory();
-            } else if (prob < 0.66) {
+            } else if (prob < 0.5) {
                 propFactory = new FireSupplyFactory();
-            } else {
+            } else if (prob < 0.75) {
                 propFactory = new BombSupplyFactory();
+            } else {
+                propFactory = new FirePlusSupplyFactory();
             }
 
             int currentX = startX + i * (propWidth + gap);

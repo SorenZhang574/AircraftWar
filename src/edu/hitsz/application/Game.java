@@ -3,6 +3,7 @@ package edu.hitsz.application;
 import edu.hitsz.factory.*;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.prop.*;
+import edu.hitsz.dao.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -64,7 +66,7 @@ public class Game extends JPanel {
 
     /**
      * 周期（ms)
-     * 指示子弹的发射频率
+     * 指示敌机子弹的发射频率
      */
 
     private int cycleDurationEnemy = 1000;
@@ -99,6 +101,49 @@ public class Game extends JPanel {
         //启动英雄机鼠标监听
         new HeroController(this, heroAircraft);
 
+    }
+
+    private void gameOverAction() {
+        URL iconURL = getClass().getResource("/images/logo-blue.png"); // 使用推荐的绝对路径
+        ImageIcon icon = new ImageIcon(iconURL);
+        Image image = icon.getImage();
+        int targetWidth = 64;
+        int targetHeight = 64;
+        Image scaledImage = image.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(scaledImage);
+        String playerName = (String)JOptionPane.showInputDialog(
+                null,
+                "Please enter your name:",
+                "input",
+                JOptionPane.PLAIN_MESSAGE,
+                icon,
+                null,
+                null
+        );
+        if (playerName == null || playerName.trim().isEmpty()) {
+            playerName = "testUserName";
+        }
+
+        GameScoreDao gameScoreDao = new GameScoreDaoImpl();
+        gameScoreDao.addScore(new GameScore(playerName, this.score));
+
+        gameScoreDao.saveScores();
+        List<GameScore> leaderboard = gameScoreDao.getAllScores();
+
+        System.out.println("\n**************************************");
+        System.out.println("              得分排行榜                ");
+        System.out.println("**************************************");
+
+        for (int i = 0; i < leaderboard.size(); i++) {
+            GameScore entry = leaderboard.get(i);
+            String[] dataParts = entry.toDataString().split(",");
+            System.out.printf("第%d名: %s, 得分: %d, 时间: %s%n",
+                    i + 1,
+                    entry.getPlayerName(),
+                    entry.getScore(),
+                    dataParts[2]
+            );
+        }
     }
 
     /**
@@ -162,6 +207,7 @@ public class Game extends JPanel {
                 // 游戏结束
                 executorService.shutdown();
                 gameOverFlag = true;
+                gameOverAction();
                 System.out.println("Game Over!");
             }
 

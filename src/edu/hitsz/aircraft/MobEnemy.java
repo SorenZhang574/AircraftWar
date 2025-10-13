@@ -1,6 +1,7 @@
 package edu.hitsz.aircraft;
 
 import edu.hitsz.prop.AbstractProp;
+import edu.hitsz.strategy.NoShootStrategy;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class MobEnemy extends EnemyAircraft {
     private final int score = 10;
 
     public MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
-        super(locationX, locationY, speedX, speedY, hp);
+        super(locationX, locationY, speedX, speedY, hp, new NoShootStrategy());
     }
 
     @Override

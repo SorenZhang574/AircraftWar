@@ -3,32 +3,14 @@ package edu.hitsz.aircraft;
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
-import edu.hitsz.factory.BombSupplyFactory;
-import edu.hitsz.factory.FireSupplyFactory;
-import edu.hitsz.factory.HpSupplyFactory;
-import edu.hitsz.factory.PropFactory;
+import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
+import edu.hitsz.strategy.ScatterShootStrategy;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class ElitePlusEnemy extends EnemyAircraft{
-    /**攻击方式 */
-
-    /**
-     * 子弹一次发射数量
-     */
-    private int shootNum = 3;
-
-    /**
-     * 子弹伤害
-     */
-    private int power = 20;
-
-    /**
-     * 子弹射击方向 (向上发射：-1，向下发射：1)
-     */
-    private int direction = 1;
 
     /**
      * 被消灭时获得分数
@@ -36,23 +18,10 @@ public class ElitePlusEnemy extends EnemyAircraft{
     private final int score = 50;
 
     public ElitePlusEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
-        super(locationX, locationY, speedX, speedY, hp);
-    }
-
-    @Override
-    public List<BaseBullet> shoot() {
-        List<BaseBullet> res = new LinkedList<>();
-        int x = this.getLocationX();
-        int y = this.getLocationY() + direction*2;
-        int speedX = 5;
-        int speedY = this.getSpeedY() + direction*2;
-        BaseBullet bullet;
-        for(int i=0; i<shootNum; i++){
-            // 散射弹道
-            bullet = new EnemyBullet(x, y, (i-1)*speedX, speedY, power);
-            res.add(bullet);
-        }
-        return res;
+        super(locationX, locationY, speedX, speedY, hp, new ScatterShootStrategy());
+        this.direction = 1;
+        this.power = 20;
+        this.shootNum = 3;
     }
 
     @Override
@@ -70,12 +39,14 @@ public class ElitePlusEnemy extends EnemyAircraft{
             int px = this.getLocationX();
             int py = this.getLocationY();
             AbstractProp prop;
-            if (prob < 0.33) {
+            if (prob < 0.25) {
                 propFactory = new HpSupplyFactory();
-            } else if (prob < 0.66) {
+            } else if (prob < 0.5) {
                 propFactory = new FireSupplyFactory();
-            } else {
+            } else if (prob < 0.75) {
                 propFactory = new BombSupplyFactory();
+            } else {
+                propFactory = new FirePlusSupplyFactory();
             }
             prop = propFactory.createProp(px, py);
             props.add(prop);

@@ -1,0 +1,100 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+title 策略模式
+
+' 策略接口
+interface ShootStrategy #LightGreen {
+  + shoot(aircraft: AbstractAircraft): List<BaseBullet>
+}
+
+' 策略
+class NoShootStrategy #LightYellow {
+  + shoot(aircraft: AbstractAircraft): List<BaseBullet>
+}
+class StraightShootStrategy #LightYellow {
+  + shoot(aircraft: AbstractAircraft): List<BaseBullet>
+}
+class ScatterShootStrategy #LightYellow {
+  + shoot(aircraft: AbstractAircraft): List<BaseBullet>
+}
+class RingShootStrategy #LightYellow {
+  + shoot(aircraft: AbstractAircraft): List<BaseBullet>
+}
+
+' 上下文
+abstract class AbstractAircraft #LightBlue {
+  # hp: int
+  # maxHp: int
+  # shootNum: int
+  # power: int
+  # direction: int
+  - shootStrategy: ShootStrategy
+
+  + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp, ShootStrategy shootStrategy)
+  + setShootStrategy(ShootStrategy: ShootStrategy): void
+  + shoot(): List<BaseBullet>
+  + getDirection(): int
+  + getPower(): int
+  + getHp(): int
+  + decreaseHp(int decrease): void
+}
+
+' 具体的上下文子类
+class HeroAircraft {
+    - {static} instance: HeroAircraft
+
+    - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + {static} getInstance(): HeroAircraft
+    + forward(): void
+    + increaseHp(int increase): void
+}
+
+abstract class EnemyAircraft {
+    + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp, ShootStrategy shootStrategy)
+    + forward():void
+    + {abstract} getScore:int
+    + {abstract} getProps:List<AbstractProp>
+}
+
+class EliteEnemy {
+    - score: int
+
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot(): List<BaseBullet>
+    + getScore: int
+    + getProps: List<AbstractProp>
+}
+
+class MobEnemy {
+    - score: int
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + getScore: int
+    + getProps: List<AbstractProp>
+}
+
+class BossEnemy {
+    - score: int
+    + BossEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + getScore: int
+    + getProps: List<AbstractProp>
+}
+
+' 策略实现
+ShootStrategy <|.. NoShootStrategy
+ShootStrategy <|.. StraightShootStrategy
+ShootStrategy <|.. ScatterShootStrategy
+ShootStrategy <|.. RingShootStrategy
+
+' 上下文和策略的聚合关系
+AbstractAircraft o--> ShootStrategy
+
+' 3. 飞机类的继承关系 (Inheritance)
+AbstractAircraft <|-- HeroAircraft
+AbstractAircraft <|-- EnemyAircraft
+EnemyAircraft <|-- MobEnemy
+EnemyAircraft <|-- EliteEnemy
+EnemyAircraft <|-- BossEnemy
+
+
+@enduml

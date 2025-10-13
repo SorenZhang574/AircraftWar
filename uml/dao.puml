@@ -1,0 +1,53 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+title 数据访问对象模式
+
+class Game {
+    + gameOverAction()
+    ...
+}
+
+
+interface GameScoreDao {
+    + getAllScores(): List<GameScore>
+    + addScore(GameScore score): void
+    + saveScores(): void
+}
+
+
+class GameScoreDaoImpl {
+    - {static} FILENAME: String
+    - {static} TITLE: String
+    - {static} HEADER: String
+    - filePath: Path
+    - scores: List<GameScore>
+    + getAllScores(): List<GameScore>
+    + addScore(GameScore score): void
+    + saveScores(): void
+    - loadFromFile(): List<GameScore>
+}
+
+class GameScore {
+    - {static} DATE_FORMAT: SimpleDateFormat
+    - playerName: String
+    - score: int
+    - recordTime: Date
+    + GameScore(String playerName, int score)
+    + GameScore(String playerName, int score, Date recordTime)
+    + getPlayerName(): String
+    + getScore(): int
+    + toDataString(): String
+    + {static} fromDataString(String dataline): GameScore
+}
+
+
+Game ..> GameScoreDao
+Game ..> GameScore
+
+GameScoreDao <|.. GameScoreDaoImpl
+
+GameScoreDao ..> GameScore
+GameScoreDaoImpl --> GameScore
+
+@enduml

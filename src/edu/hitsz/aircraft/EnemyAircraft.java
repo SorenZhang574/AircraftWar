@@ -1,16 +1,15 @@
 package edu.hitsz.aircraft;
 
 import edu.hitsz.application.Main;
-import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.prop.AbstractProp;
+import edu.hitsz.strategy.ShootStrategy;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public abstract class EnemyAircraft extends AbstractAircraft {
 
-    public EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp) {
-        super(locationX, locationY, speedX, speedY, hp);
+    public EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp, ShootStrategy shootStrategy) {
+        super(locationX, locationY, speedX, speedY, hp, shootStrategy);
     }
 
     @Override
@@ -20,11 +19,6 @@ public abstract class EnemyAircraft extends AbstractAircraft {
         if (locationY >= Main.WINDOW_HEIGHT ) {
             vanish();
         }
-    }
-
-    @Override
-    public List<BaseBullet> shoot() {
-        return new LinkedList<>();
     }
 
     public abstract int getScore();
