@@ -47,4 +47,8 @@ public class GameScore {
             return null;
         }
     }
+
+    public Date getRecordTime() {
+        return recordTime;
+    }
 }

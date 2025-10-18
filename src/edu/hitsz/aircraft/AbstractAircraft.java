@@ -22,7 +22,7 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
     protected int shootNum = 1;
     protected int power = 30;
 
-    private ShootStrategy shootStrategy;
+    protected ShootStrategy shootStrategy;
 
     public AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp, ShootStrategy shootStrategy) {
         super(locationX, locationY, speedX, speedY);

@@ -2,7 +2,14 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
+import edu.hitsz.strategy.RingShootStrategy;
+import edu.hitsz.strategy.ScatterShootStrategy;
 import edu.hitsz.strategy.StraightShootStrategy;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 英雄飞机，游戏玩家操控
@@ -22,6 +29,32 @@ public class HeroAircraft extends AbstractAircraft {
      * 懒汉式实现英雄机创建
      */
     private static HeroAircraft instance;
+
+    private ScheduledFuture<?> fireTimer;
+    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    public synchronized void activateFire(int level, long durationMs) {
+
+        switch (level) {
+            case 1:
+                this.shootStrategy = new ScatterShootStrategy();
+                break;
+            case 2:
+                this.shootStrategy = new RingShootStrategy();
+                break;
+            default:
+                this.shootStrategy = new StraightShootStrategy();
+        }
+
+        if (fireTimer != null && !fireTimer.isDone()) {
+            fireTimer.cancel(true);
+        }
+
+        fireTimer = scheduler.schedule(() -> {
+            synchronized (HeroAircraft.this) {
+                this.shootStrategy = new StraightShootStrategy();
+            }
+        }, durationMs, TimeUnit.MILLISECONDS);
+    }
 
     private HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp, new StraightShootStrategy());

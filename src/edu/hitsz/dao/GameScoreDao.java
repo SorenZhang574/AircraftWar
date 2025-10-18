@@ -1,5 +1,6 @@
 package edu.hitsz.dao;
 
+import java.util.Date;
 import java.util.List;
 
 public interface GameScoreDao {
@@ -16,4 +17,8 @@ public interface GameScoreDao {
      * 将内存中的所有得分记录保存到文件。
      */
     void saveScores();
+    /**
+     * 删除记录
+     */
+    void deleteScore(String playerName, int score, Date recordTime);
 }

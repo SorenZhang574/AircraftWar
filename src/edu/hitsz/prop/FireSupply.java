@@ -1,9 +1,10 @@
 package edu.hitsz.prop;
 
 import edu.hitsz.aircraft.HeroAircraft;
-import edu.hitsz.strategy.ScatterShootStrategy;
 
 public class FireSupply extends AbstractProp {
+    private static final long DURATION = 8000;
+
     public FireSupply(int x, int y, int speedY) {
         super(x, y, 0, speedY);
     }
@@ -11,7 +12,7 @@ public class FireSupply extends AbstractProp {
     @Override
     public void activate(HeroAircraft hero) {
         System.out.println("FireSupply active!");
-        hero.setShootStrategy(new ScatterShootStrategy());
+        hero.activateFire(1, DURATION);
         this.vanish();
     }
 }

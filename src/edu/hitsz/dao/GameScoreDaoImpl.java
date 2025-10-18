@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,5 +72,16 @@ public class GameScoreDaoImpl implements GameScoreDao {
             System.err.println("Error loading leaderboard: " + e.getMessage());
             return new LinkedList<>();
         }
+    }
+    /**
+     * 删除记录
+     */
+    @Override
+    public void deleteScore(String playerName, int score, Date recordTime) {
+        scores.removeIf(s ->
+                s.getPlayerName().equals(playerName) &&
+                        s.getScore() == score &&
+                        s.getRecordTime().equals(recordTime)
+        );
     }
 }
