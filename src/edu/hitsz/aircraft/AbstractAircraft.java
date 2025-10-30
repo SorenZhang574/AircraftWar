@@ -2,6 +2,7 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
+import edu.hitsz.prop.BombObserver;
 import edu.hitsz.strategy.ShootStrategy;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  *
  * @author hitsz
  */
-public abstract class AbstractAircraft extends AbstractFlyingObject {
+public abstract class AbstractAircraft extends AbstractFlyingObject implements BombObserver {
     /**
      * 生命值
      */
@@ -23,6 +24,19 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
     protected int power = 30;
 
     protected ShootStrategy shootStrategy;
+
+    public int getShootNum () {
+        return shootNum;
+    }
+
+    @Override
+    public void update() {
+        this.vanish();  // default action: vanish
+    }
+
+    public int getMaxHp() {
+        return maxHp;
+    }
 
     public AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp, ShootStrategy shootStrategy) {
         super(locationX, locationY, speedX, speedY);
@@ -57,10 +71,6 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
 
     public int getPower() {
         return power;
-    }
-
-    public void setShootStrategy(ShootStrategy shootStrategy) {
-        this.shootStrategy = shootStrategy;
     }
 }
 

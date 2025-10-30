@@ -14,28 +14,37 @@ public class ScatterShootStrategy implements ShootStrategy{
     public List<BaseBullet> shoot(AbstractAircraft aircraft) {
         List<BaseBullet> res = new LinkedList<>();
         int x = aircraft.getLocationX();
-        int direction = aircraft.getDirection();
-        int y = aircraft.getLocationY() + direction*2;
-        int speedX = 5;
-        int speedY = aircraft.getSpeedY() + direction*2;
-        int shootNum = 3;
+        int y = aircraft.getLocationY() + aircraft.getDirection() * 2;
         int power = aircraft.getPower();
-        BaseBullet bullet;
+        int direction = aircraft.getDirection();
+        int shootNum;
+        double spreadAngle;
+
         if (aircraft instanceof HeroAircraft) {
-            speedY = -5;
-            for(int i=0; i<shootNum; i++){
-                // 散射弹道
-                bullet = new HeroBullet(x, y, (i-1)*speedX, speedY, power);
-                res.add(bullet);
-            }
+            shootNum = aircraft.getShootNum() + 2;
+            spreadAngle = Math.toRadians(60);
         } else {
-            for(int i=0; i<shootNum; i++){
-                // 散射弹道
-                bullet = new EnemyBullet(x, y, (i-1)*speedX, speedY, power);
-                res.add(bullet);
-            }
+            shootNum = 3;
+            spreadAngle = Math.toRadians(40);
         }
 
+        double baseAngle = (direction == -1) ? -Math.PI / 2 : Math.PI / 2;
+        for (int i = 0; i < shootNum; i++) {
+            double offset = ((double)i - (shootNum - 1) / 2.0) / (shootNum - 1);
+            double angle = baseAngle + offset * spreadAngle;
+
+            int speedHero = 10;
+            int speedEnemy = 15;
+            int speedX = (int)(speedHero * Math.cos(angle));
+            int speedY = (int)(speedHero * Math.sin(angle));
+            int speedYEnemy = (int)(speedEnemy * Math.sin(angle));
+
+            BaseBullet bullet = (aircraft instanceof HeroAircraft)
+                    ? new HeroBullet(x, y, speedX, speedY, power)
+                    : new EnemyBullet(x, y, speedX, speedYEnemy, power);
+            res.add(bullet);
+        }
         return res;
     }
+
 }

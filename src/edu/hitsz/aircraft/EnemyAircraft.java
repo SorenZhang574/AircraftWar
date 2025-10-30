@@ -25,4 +25,11 @@ public abstract class EnemyAircraft extends AbstractAircraft {
 
     public abstract List<AbstractProp> getProps();
 
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
+    }
 }

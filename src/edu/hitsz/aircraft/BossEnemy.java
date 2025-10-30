@@ -17,11 +17,16 @@ public class BossEnemy extends EnemyAircraft {
      */
     private final int score = 100;
 
+    @Override
+    public void update() {
+    }
+
     public BossEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp, new RingShootStrategy());
         this.power = 20;
         this.direction = 1;
         this.shootNum = 20;
+        this.maxHp = hp;
     }
 
     @Override

@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-title 英雄机单例模式 UML 类图
+title 英雄机单例模式
 
 abstract class AbstractFlyingObject
 {
@@ -13,7 +13,6 @@ abstract class AbstractFlyingObject
     # width:int
     # height:int
     # isValid:boolean
-
     + AbstractFlyingObject(int locationX, int locationY, int speedX, int speedY)
     + forward():void
     + crash(AbstractFlyingObject flyingObject):boolean
@@ -32,18 +31,39 @@ abstract class AbstractAircraft
 {
 	# maxHp:int
     # hp:int
+    # direction:int
+    # shootNum:int
+    # power:int
+    # shootStrategy:ShootStrategy
     + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
     + decreaseHp(int decrease):void
+    + getMaxHp():int
     + getHp():int
     + {abstract} shoot():List<BaseBullet>
 }
 
 class HeroAircraft {
+    - level:int
+    - exp:int
+    - expToNextLevel:int
+    - fireTimer:ScheduledFuture<?>
+    - {static} scheduler:ScheduledExecutorService
+    - animationIndex:int
+    - animationCounter:int
     - shootNum:int
     - power:int
     - direction:int
     - {static} instance: HeroAircraft
     - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + updateAnimation():void
+    + getFireImage():BufferdImage
+    + activateFire(int level, long durationMs):void
+    + update():void
+    + resetStatus():void
+    - levelUp():void
+    + getLevel():int
+    + getExp():int
+    + getExpToNextLevel():int
     + {static} getInstance():HeroAircraft
     + forward():void
     + shoot():List<BaseBullet>

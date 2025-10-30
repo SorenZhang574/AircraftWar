@@ -1,7 +1,6 @@
 package edu.hitsz;
 
-import edu.hitsz.application.Game;
-import edu.hitsz.application.MusicManager;
+import edu.hitsz.application.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +35,19 @@ public class MainMenuForm {
             }
             showLeaderboard(Game.getStaticScore(), difficulty);
         };
-        Game gamePanel = new Game(difficulty, onGameOver);
+        Game gamePanel;
+        switch (difficulty) {
+            case "EASY":
+                gamePanel = new EasyGame(onGameOver);
+                break;
+            case "HARD":
+                gamePanel = new HardGame(onGameOver);
+                break;
+            case "NORMAL":
+            default:
+                gamePanel = new NormalGame(onGameOver);
+                break;
+        }
 
         switchPanel(gamePanel);
         gamePanel.action();

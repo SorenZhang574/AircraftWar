@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-title 敌机的工厂模式 UML 类图
+title 敌机工厂模式
 
 abstract class AbstractProp {
     + AbstractProp(int locationX, int locationY, int speedX, int speedY)
@@ -17,19 +17,36 @@ abstract class EnemyAircraft {
     + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
     + forward():void
     + shoot():List<BaseBullet>
-    + {abstract} getScore:int
-    + {abstract} getProps:List<AbstractProp>
+    + {abstract} getScore():int
+    + {abstract} getProps():List<AbstractProp>
+    + setHp(int hp):void
+    + setMaxHp(int maxHp):void
 }
 
-class EliteEnemy {
-    - shootNum:int
-    - power:int
-    - direction:int
+class BossEnemy {
     - score:int
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
     + shoot():List<BaseBullet>
-    + getScore:int
-    + getProps:List<AbstractProp>
+    + getScore():int
+    + update():void
+    + getProps():List<AbstractProp>
+}
+
+class EliteEnemy {
+    - score:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + getProps():List<AbstractProp>
+}
+
+class ElitePlusEnemy {
+    - score:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + update():void
+    + getProps():List<AbstractProp>
 }
 
 class MobEnemy {
@@ -51,19 +68,31 @@ class EliteEnemyFactory {
     + createEnemy(): EnemyAircraft
 }
 
+class ElitePlusEnemyFactory {
+    + createEnemy(): EnemyAircraft
+}
+
+class BossEnemyFactory {
+    + createEnemy(): EnemyAircraft
+}
+
 EnemyAircraft <|-- MobEnemy
 EnemyAircraft <|-- EliteEnemy
 EnemyAircraft ..> AbstractProp
-MobEnemy ..> AbstractProp
-EliteEnemy ..> AbstractProp
 
 EnemyFactory <|.. MobEnemyFactory
 EnemyFactory <|.. EliteEnemyFactory
+EnemyFactory <|.. ElitePlusEnemyFactory
+EnemyFactory <|.. BossEnemyFactory
+ElitePlusEnemy ..> PropFactory
 EliteEnemy ..> PropFactory
+BossEnemy ..> PropFactory
 
 EnemyFactory ..> EnemyAircraft
 
 MobEnemyFactory ..> MobEnemy
 EliteEnemyFactory ..> EliteEnemy
+ElitePlusEnemyFactory ..> ElitePlusEnemy
+BossEnemyFactory ..> BossEnemy
 
 @enduml

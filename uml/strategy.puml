@@ -4,80 +4,109 @@
 title 策略模式
 
 ' 策略接口
-interface ShootStrategy #LightGreen {
+interface ShootStrategy {
   + shoot(aircraft: AbstractAircraft): List<BaseBullet>
 }
 
 ' 策略
-class NoShootStrategy #LightYellow {
+class NoShootStrategy {
   + shoot(aircraft: AbstractAircraft): List<BaseBullet>
 }
-class StraightShootStrategy #LightYellow {
+class StraightShootStrategy {
   + shoot(aircraft: AbstractAircraft): List<BaseBullet>
 }
-class ScatterShootStrategy #LightYellow {
+class ScatterShootStrategy {
   + shoot(aircraft: AbstractAircraft): List<BaseBullet>
 }
-class RingShootStrategy #LightYellow {
+class RingShootStrategy {
   + shoot(aircraft: AbstractAircraft): List<BaseBullet>
 }
 
 ' 上下文
-abstract class AbstractAircraft #LightBlue {
-  # hp: int
-  # maxHp: int
-  # shootNum: int
-  # power: int
-  # direction: int
-  - shootStrategy: ShootStrategy
-
-  + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp, ShootStrategy shootStrategy)
-  + setShootStrategy(ShootStrategy: ShootStrategy): void
-  + shoot(): List<BaseBullet>
-  + getDirection(): int
-  + getPower(): int
-  + getHp(): int
-  + decreaseHp(int decrease): void
+abstract class AbstractAircraft {
+	# maxHp:int
+    # hp:int
+    # direction:int
+    # shootNum:int
+    # power:int
+    # shootStrategy:ShootStrategy
+    + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + decreaseHp(int decrease):void
+    + getMaxHp():int
+    + getHp():int
+    + {abstract} shoot():List<BaseBullet>
 }
 
 ' 具体的上下文子类
 class HeroAircraft {
+    - level:int
+    - exp:int
+    - expToNextLevel:int
+    - fireTimer:ScheduledFuture<?>
+    - {static} scheduler:ScheduledExecutorService
+    - animationIndex:int
+    - animationCounter:int
+    - shootNum:int
+    - power:int
+    - direction:int
     - {static} instance: HeroAircraft
-
     - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
-    + {static} getInstance(): HeroAircraft
-    + forward(): void
-    + increaseHp(int increase): void
+    + updateAnimation():void
+    + getFireImage():BufferdImage
+    + activateFire(int level, long durationMs):void
+    + update():void
+    + resetStatus():void
+    - levelUp():void
+    + getLevel():int
+    + getExp():int
+    + getExpToNextLevel():int
+    + {static} getInstance():HeroAircraft
+    + forward():void
+    + shoot():List<BaseBullet>
+    + increaseHp(int increase):void
 }
 
 abstract class EnemyAircraft {
-    + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp, ShootStrategy shootStrategy)
+    + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
     + forward():void
-    + {abstract} getScore:int
-    + {abstract} getProps:List<AbstractProp>
+    + shoot():List<BaseBullet>
+    + {abstract} getScore():int
+    + {abstract} getProps():List<AbstractProp>
+    + setHp(int hp):void
+    + setMaxHp(int maxHp):void
 }
 
 class EliteEnemy {
-    - score: int
-
+    - score:int
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
-    + shoot(): List<BaseBullet>
-    + getScore: int
-    + getProps: List<AbstractProp>
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + getProps():List<AbstractProp>
+}
+
+class ElitePlusEnemy {
+    - score:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + update():void
+    + getProps():List<AbstractProp>
 }
 
 class MobEnemy {
-    - score: int
+    - score:int
     + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
-    + getScore: int
-    + getProps: List<AbstractProp>
+    + getScore:int
+    + getProps:List<AbstractProp>
 }
 
 class BossEnemy {
-    - score: int
-    + BossEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
-    + getScore: int
-    + getProps: List<AbstractProp>
+    - score:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + update():void
+    + getProps():List<AbstractProp>
 }
 
 ' 策略实现
@@ -89,12 +118,12 @@ ShootStrategy <|.. RingShootStrategy
 ' 上下文和策略的聚合关系
 AbstractAircraft o--> ShootStrategy
 
-' 3. 飞机类的继承关系 (Inheritance)
 AbstractAircraft <|-- HeroAircraft
 AbstractAircraft <|-- EnemyAircraft
 EnemyAircraft <|-- MobEnemy
 EnemyAircraft <|-- EliteEnemy
 EnemyAircraft <|-- BossEnemy
+EnemyAircraft <|-- ElitePlusEnemy
 
 
 @enduml

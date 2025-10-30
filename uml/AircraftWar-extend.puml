@@ -1,8 +1,8 @@
 @startuml
 'https://plantuml.com/class-diagram
+title 类的继承关系
 
-abstract class AbstractFlyingObject
-{
+abstract class AbstractFlyingObject {
     # locationX:int
     # locationY:int
     # speedX:int
@@ -25,15 +25,19 @@ abstract class AbstractFlyingObject
     + vanish():void
 }
 
-abstract class AbstractAircraft
-{
+abstract class AbstractAircraft {
 	# maxHp:int
     # hp:int
+    # direction:int
+    # shootNum:int
+    # power:int
+    # shootStrategy:ShootStrategy
     + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
     + decreaseHp(int decrease):void
+    + getMaxHp():int
     + getHp():int
     + {abstract} shoot():List<BaseBullet>
- }
+}
 
 class HeroAircraft {
     - shootNum:int
@@ -45,30 +49,55 @@ class HeroAircraft {
     + increaseHp(int increase):void
 }
 
-class EnemyAircraft {
+abstract class EnemyAircraft {
     + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
     + forward():void
     + shoot():List<BaseBullet>
+    + {abstract} getScore():int
+    + {abstract} getProps():List<AbstractProp>
+    + setHp(int hp):void
+    + setMaxHp(int maxHp):void
+}
+
+class BossEnemy {
+    - score:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + update():void
+    + getProps():List<AbstractProp>
 }
 
 class EliteEnemy {
-    - shootNum:int
-    - power:int
-    - direction:int
+    - score:int
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
     + shoot():List<BaseBullet>
+    + getScore():int
+    + getProps():List<AbstractProp>
+}
+
+class ElitePlusEnemy {
+    - score:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + update():void
+    + getProps():List<AbstractProp>
 }
 
 class MobEnemy {
+    - score:int
     + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + getScore:int
+    + getProps:List<AbstractProp>
 }
 
-abstract class BaseBullet
-{
+class BaseBullet {
     - power:int
+    + update():void
     + BaseBullet(int locationX, int locationY, int speedX, int speedY, int power)
     + forward():void
-	+ getPower():int
+    + getPower():int
 }
 
 class HeroBullet {
@@ -88,18 +117,29 @@ abstract class AbstractProp {
 }
 
 class HpSupply {
-    - hpIncrease:int = 30
+    - hpIncrease:int
     + HpSupply(int x, int y, int speedY)
     + activate(HeroAircraft hero):void
 }
 
 class BombSupply {
+    + {static} observers:List<BombObserver>
+    + {static} registerObserver(BombObserver s):void
+    + {static} removeObserve(BombObserver s):void
+    - notifyObservers():void
     + BombSupply(int x, int y, int speedY)
     + activate(HeroAircraft hero):void
 }
 
 class FireSupply {
+    - {static} DURATION:long
     + FireSupply(int x, int y, int speedY)
+    + activate(HeroAircraft hero):void
+}
+
+class FirePlusSupply {
+    - {static} DURATION:long
+    + FirePlusSupply(int x, int y, int speedY)
     + activate(HeroAircraft hero):void
 }
 
@@ -112,6 +152,8 @@ AbstractAircraft <|-- HeroAircraft
 AbstractAircraft <|-- EnemyAircraft
 
 EnemyAircraft <|-- EliteEnemy
+EnemyAircraft <|-- ElitePlusEnemy
+EnemyAircraft <|-- BossEnemy
 EnemyAircraft <|-- MobEnemy
 
 BaseBullet <|-- HeroBullet
@@ -120,14 +162,6 @@ BaseBullet <|-- EnemyBullet
 AbstractProp <|-- HpSupply
 AbstractProp <|-- BombSupply
 AbstractProp <|-- FireSupply
-
-AbstractAircraft ..> BaseBullet
-
-EnemyAircraft ..> BaseBullet
-HeroAircraft ..> HeroBullet
-EliteEnemy ..> EnemyBullet
-HpSupply ..> HeroAircraft
-BombSupply ..> HeroAircraft
-FireSupply ..> HeroAircraft
+AbstractProp <|-- FirePlusSupply
 
 @enduml

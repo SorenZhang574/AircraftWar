@@ -21,8 +21,12 @@ public class StraightShootStrategy implements ShootStrategy{
         int power = aircraft.getPower();
         BaseBullet bullet;
         if (aircraft instanceof HeroAircraft) {
+            shootNum = aircraft.getShootNum();
+            int gap = 20;
+            double startX = x - (shootNum - 1) * gap / 2.0;
             for (int i = 0; i < shootNum; i++) {
-                bullet = new HeroBullet(x, y, speedX, speedY, power);
+                int currentX = (int) (startX + i * gap);
+                bullet = new HeroBullet(currentX, y, speedX, speedY, power);
                 res.add(bullet);
             }
         } else {

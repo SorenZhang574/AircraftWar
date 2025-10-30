@@ -13,7 +13,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +46,7 @@ public class ImageManager {
     public static BufferedImage BOMB_SUPPLY_IMAGE;
     public static BufferedImage FIRE_SUPPLY_IMAGE;
     public static BufferedImage FIRE_PLUS_SUPPLY_IMAGE;
-
+    public static final List<BufferedImage> HERO_FIRE_ANIMATION = new ArrayList<>();
     static {
         try {
 
@@ -79,7 +81,31 @@ public class ImageManager {
             CLASSNAME_IMAGE_MAP.put(BombSupply.class.getName(), BOMB_SUPPLY_IMAGE);
             CLASSNAME_IMAGE_MAP.put(FireSupply.class.getName(), FIRE_SUPPLY_IMAGE);
             CLASSNAME_IMAGE_MAP.put(FirePlusSupply.class.getName(), FIRE_PLUS_SUPPLY_IMAGE);
+            BufferedImage fireSheet = ImageIO.read(new FileInputStream("src/images/hero_fire_sheet.png"));
+            final int frameRows = 2;
+            final int frameCols = 3;
+            final int frameWidth = fireSheet.getWidth() / frameCols;
+            final int frameHeight = fireSheet.getHeight() / frameRows;
+            for (int i = 0; i < frameRows; i++) {
+                for (int j = 0; j < frameCols; j++) {
+                    BufferedImage frame = fireSheet.getSubimage(
+                            j * frameWidth,
+                            i * frameHeight,
+                            frameWidth,
+                            frameHeight
+                    );
+                    int newW = frameWidth / 8;
+                    int newH = frameHeight / 8;
+                    BufferedImage scaled = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+                    scaled.getGraphics().drawImage(frame, 0, 0, newW, newH, null);
 
+                    // === 🔹 垂直翻转 ===
+                    BufferedImage flipped = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+                    flipped.getGraphics().drawImage(scaled, 0, newH, newW, -newH, null);
+
+                    HERO_FIRE_ANIMATION.add(flipped);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);

@@ -1,8 +1,5 @@
 package edu.hitsz.aircraft;
 
-import edu.hitsz.application.Main;
-import edu.hitsz.bullet.BaseBullet;
-import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
 import edu.hitsz.strategy.ScatterShootStrategy;
@@ -27,6 +24,11 @@ public class ElitePlusEnemy extends EnemyAircraft{
     @Override
     public int getScore() {
         return score;
+    }
+
+    @Override
+    public void update() {
+        decreaseHp(100);
     }
 
     @Override

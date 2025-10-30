@@ -1,0 +1,107 @@
+@startuml
+'https://plantuml.com/class-diagram
+title 模板模式
+
+abstract class Game {
+    - background:BufferedImage
+    - shakeOffsetX:int
+    - shakeOffsetY:int
+    - shakeDuration:int
+    - SHAKE_INTENSITY:int
+    - enemyMaxNumber:int
+    - scoreThreshold:int
+    - eliteProb:double
+    - cycleDurationEnemyShoot:int
+    - isBossExisting:boolean
+    - bossKillCount:int
+    - backGroundTop:int
+    - executorService:ScheduledExecutorService
+    - timeInterval:int
+    - heroAircraft:HeroAircraft
+    - enemyAircrafts:List<EnemyAircraft>
+    - heroBullets:List<BaseBullet>
+    - enemyBullets:List<BaseBullet>
+    - props:List<AbstractProp>
+    - score:int
+    - time:int
+    - cycleDuration:int
+    - cycleTime:int
+    - cycleDurationEnemyGenerate:int
+    - cycleTimeEnemyGenerate:int
+    - cycleTimeEnemyShoot:int
+    - onGameOver:Runnable
+    - staticScore:int
+    + Game(onGameOver : Runnable)
+    # {abstract} setInitialParameters():void
+    # {abstract} increaseDifficultyOverTime():void
+    # {abstract} spawnBossIfRequired():void
+    + spawnEnemy():EnemyAircraft
+    + action():void
+    - crashCheckAction():void
+    - postProcessAction():void
+    + paint(Graphic g):void
+    - updateShake():void
+    - shakeScreen(int durationInMs):void
+    - drawBossHealthBar(Graphic g):void
+    - drawExperienceBar(Graphics g):void
+    - paintImageWithPositionRevised(Graphics g, List<? extends AbstractFlyingObject> objects):void
+    - paintScoreAndLife(Graphics g):void
+    - shootActionEnemy():void
+    + registerEnemy(EnemyAircraft enemy):void
+    + getTime():int
+    + getScore():int
+    + getEnemyAircrafts():List<EnemyAircraft>
+    + getEnemyMaxNumber():int
+    + setEnemyMaxNumber(int enemyMaxNumber):void
+    + getScoreThreshold():int
+    + setScoreThreshold():void
+    + getEliteProb():double
+    + setEliteProb(double eliteProb):void
+    + getCycleDurationEnemyShoot():int
+    + setCycleDurationEnemyShoot(int cycleDurationEnemyShoot):void
+    + getCycleDurationEnemyGenerate():int
+    + setCycleDurationEnemyGenerate(int cycleDurationEnemyGenerate):void
+    + isBossExisting():boolean
+    + setBossExisting(b : boolean):void
+    + getBossKillCount():int
+    + setBackground(BufferedImage background):void
+    + {static} getStaticScore:int
+    - timeCountAndNewCycleJudge():boolean
+    - timeCountAndNewCycleJudgeEnemyGenerate():boolean
+    - timeCountAndNewCycleJudgeEnemyShoot():boolean
+    - shootActionHero():void
+    - bulletsMoveAction():void
+    - aircraftsMoveAction():void
+}
+
+class EasyGame {
+    + EasyGame(Runnable onGameOver)
+    # setInitialParameters():void
+    # increaseDifficultyOverTime():void
+    # spawnBossIfRequired():void
+}
+
+class NormalGame {
+    - lastDifficultyIncreaseTime:long
+    + NormalGame(Runnable onGameOver)
+    # setInitialParameters():void
+    # increaseDifficultyOverTime():void
+    # spawnBossIfRequired():void
+}
+
+class HardGame {
+    - baseBossHp:int
+    - bossHpIncrease:int
+    - lastDifficultyIncreaseTime:long
+    + NormalGame(Runnable onGameOver)
+    # setInitialParameters():void
+    # increaseDifficultyOverTime():void
+    # spawnBossIfRequired():void
+}
+
+
+Game <|-- EasyGame
+Game <|-- NormalGame
+Game <|-- HardGame
+
+@enduml

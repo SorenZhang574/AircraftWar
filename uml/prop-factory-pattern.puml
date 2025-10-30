@@ -1,32 +1,42 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-title 道具的工厂模式 UML 类图
+title 道具工厂模式
 
 abstract class EnemyAircraft {
     + EnemyAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
     + forward():void
     + shoot():List<BaseBullet>
-    + {abstract} getScore:int
-    + {abstract} getProps:List<AbstractProp>
+    + {abstract} getScore():int
+    + {abstract} getProps():List<AbstractProp>
+    + setHp(int hp):void
+    + setMaxHp(int maxHp):void
 }
 
 class EliteEnemy {
-    - shootNum:int
-    - power:int
-    - direction:int
     - score:int
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
     + shoot():List<BaseBullet>
-    + getScore:int
-    + getProps:List<AbstractProp>
+    + getScore():int
+    + getProps():List<AbstractProp>
 }
 
-class MobEnemy {
+class ElitePlusEnemy {
     - score:int
-    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
-    + getScore:int
-    + getProps:List<AbstractProp>
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + update():void
+    + getProps():List<AbstractProp>
+}
+
+class BossEnemy {
+    - score:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+    + getScore():int
+    + update():void
+    + getProps():List<AbstractProp>
 }
 
 abstract class AbstractProp {
@@ -36,18 +46,29 @@ abstract class AbstractProp {
 }
 
 class HpSupply {
-    - hpIncrease:int = 30
+    - hpIncrease:int
     + HpSupply(int x, int y, int speedY)
     + activate(HeroAircraft hero):void
 }
 
 class BombSupply {
+    + {static} observers:List<BombObserver>
+    + {static} registerObserver(BombObserver s):void
+    + {static} removeObserve(BombObserver s):void
+    - notifyObservers():void
     + BombSupply(int x, int y, int speedY)
     + activate(HeroAircraft hero):void
 }
 
 class FireSupply {
+    - {static} DURATION:long
     + FireSupply(int x, int y, int speedY)
+    + activate(HeroAircraft hero):void
+}
+
+class FirePlusSupply {
+    - {static} DURATION:long
+    + FirePlusSupply(int x, int y, int speedY)
     + activate(HeroAircraft hero):void
 }
 
@@ -56,35 +77,42 @@ interface PropFactory {
 }
 
 class HpSupplyFactory {
-    + speedY
+    + speedY:int
     + createProp(int locationX, int locationY): AbstractProp
 }
 class BombSupplyFactory {
-    + speedY
+    + speedY:int
     + createProp(int locationX, int locationY): AbstractProp
 }
 class FireSupplyFactory {
-    + speedY
+    + speedY:int
+    + createProp(int locationX, int locationY): AbstractProp
+}
+class FirePlusSupplyFactory {
+    + speedY:int
     + createProp(int locationX, int locationY): AbstractProp
 }
 
 AbstractProp <|-- HpSupply
 AbstractProp <|-- BombSupply
 AbstractProp <|-- FireSupply
+AbstractProp <|-- FirePlusSupply
 
 PropFactory <|.. HpSupplyFactory
 PropFactory <|.. BombSupplyFactory
 PropFactory <|.. FireSupplyFactory
+PropFactory <|.. FirePlusSupplyFactory
 
 PropFactory ..> AbstractProp
 
 HpSupplyFactory ..> HpSupply
 BombSupplyFactory ..> BombSupply
 FireSupplyFactory ..> FireSupply
+FirePlusSupplyFactory ..> FirePlusSupply
 
 EnemyAircraft ..> AbstractProp
-MobEnemy ..> AbstractProp
-EliteEnemy ..> AbstractProp
+ElitePlusEnemy ..> PropFactory
+BossEnemy ..> PropFactory
 EliteEnemy ..> PropFactory
 
 @enduml
